@@ -38,6 +38,9 @@
                                 <td><?= esc($song['bpm']) ?? '-' ?></td>
                                 <td><?= esc($song['time']) ?? '-' ?></td>
                                 <td>
+                                    <a href="/songs/preview/<?= $song['id'] ?>" class="btn btn-sm btn-outline-primary" title="Preview" target="_blank">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
                                     <a href="/songs/create/<?= $song['id'] ?>" class="btn btn-sm btn-primary" title="Edit">
                                         <i class="fas fa-edit"></i>
                                     </a>

@@ -13,7 +13,11 @@
                     <a class="nav-link" href="<?= base_url('songs/create') ?>">Create New Song</a>
                 </li>
             </ul>
-            <?php if (current_url() == base_url('songs/create') || strpos(current_url(), '/songs/create/') !== false): ?>
+            <?php 
+            $currentUrl = current_url();
+            $isCreatePage = strpos($currentUrl, '/songs/create') !== false;
+            if ($isCreatePage): 
+            ?>
                 <div class="d-flex gap-2">
                     <button class="btn btn-outline-primary" id="previewButton">Preview</button>
                     <button class="btn btn-success" id="saveButton">Save Song</button>

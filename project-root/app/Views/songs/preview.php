@@ -86,10 +86,25 @@
 <body>
     <div class="print-controls no-print">
         <button class="btn btn-primary" onclick="window.print()">Print</button>
-        <button class="btn btn-secondary" onclick="window.close()">Close</button>
+        <button class="btn btn-secondary" onclick="closePreview()">Close</button>
     </div>
     <div class="preview-content" id="preview">
         <?= $content ?>
     </div>
+
+    <script>
+    function closePreview() {
+        // Try to close the window first
+        if (window.close()) {
+            return;
+        }
+        // If window.close() fails, try to go back or to the songs list
+        if (window.history.length > 1) {
+            window.history.back();
+        } else {
+            window.location.href = '/songs';
+        }
+    }
+    </script>
 </body>
 </html> 

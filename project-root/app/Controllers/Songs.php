@@ -105,8 +105,27 @@ class Songs extends BaseController
         ]);
     }
 
-    public function preview()
+    public function preview($id = null)
     {
+        if ($id) {
+            // Fetch song data by ID
+            $songModel = new \App\Models\SongModel();
+            $song = $songModel->find($id);
+            
+            if (!$song) {
+                return redirect()->to('/songs');
+            }
+            
+            // Parse the ChordPro content
+            $content = $this->parseChordPro($song['chordpro']);
+            
+            return view('songs/preview', [
+                'content' => $content,
+                'title' => $song['title']
+            ]);
+        }
+        
+        // Handle POST request with direct content
         $content = $this->request->getPost('content');
         $title = $this->request->getPost('title');
         
@@ -118,5 +137,62 @@ class Songs extends BaseController
             'content' => $content,
             'title' => $title
         ]);
+    }
+    
+    private function parseChordPro($text)
+    {
+        // Basic ChordPro parsing
+        $html = '<div class="preview-header">';
+        
+        // Parse metadata
+        $title = preg_match('/{title:\s*(.+)}/', $text, $matches) ? $matches[1] : null;
+        $key = preg_match('/{key:\s*(.+)}/', $text, $matches) ? $matches[1] : null;
+        $tempo = preg_match('/{tempo:\s*([^}]+)}/', $text, $matches) ? $matches[1] : null;
+        $time = preg_match('/{time:\s*(.+)}/', $text, $matches) ? $matches[1] : null;
+        
+        if ($title) {
+            $html .= "<div class=\"preview-title\">{$title}</div>";
+        }
+        
+        $meta = [];
+        if ($key) $meta[] = "Key: {$key}";
+        if ($tempo) $meta[] = "{$tempo} bpm";
+        if ($time) $meta[] = "{$time}";
+        
+        if (!empty($meta)) {
+            $html .= "<div class=\"preview-meta\">" . implode(', ', $meta) . "</div>";
+        }
+        
+        $html .= '</div>';
+        
+        // Parse content
+        $lines = explode("\n", $text);
+        $inVerse = false;
+        
+        foreach ($lines as $line) {
+            if (trim($line) === '') {
+                $html .= '<br>';
+                continue;
+            }
+            
+            if (preg_match('/{.*}/', $line)) continue; // Skip metadata lines
+            
+            if (preg_match('/^\[(Verse|Chorus|Bridge).*\]$/', $line, $matches)) {
+                if ($inVerse) $html .= '</div>';
+                $sectionName = $matches[1];
+                $html .= "<div class=\"verse\"><div class=\"section-name\">{$sectionName}</div>";
+                $inVerse = true;
+                continue;
+            }
+            
+            // Parse chords and lyrics
+            $processedLine = $line;
+            $processedLine = preg_replace('/\[([^\]]+)\]/', '<span class="chord">$1</span>', $processedLine);
+            
+            $html .= "<div class=\"line\">{$processedLine}</div>";
+        }
+        
+        if ($inVerse) $html .= '</div>';
+        return $html;
     }
 } 
