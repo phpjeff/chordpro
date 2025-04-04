@@ -7,7 +7,7 @@
             <a href="/songs" class="alert-link">Return to song list</a>
         </div>
     <?php else: ?>
-        <div class="content-wrapper">
+        <div class="container-fluid content-wrapper">
             <div class="toolbar">
                 <div class="row align-items-center">
                     <div class="col-12 mb-2">

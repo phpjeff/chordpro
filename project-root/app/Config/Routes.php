@@ -13,3 +13,4 @@ $routes->post('songs/save', 'Songs::save');
 $routes->get('songs/edit/(:num)', 'Songs::edit/$1');
 $routes->post('songs/update/(:num)', 'Songs::update/$1');
 $routes->delete('songs/delete/(:num)', 'Songs::delete/$1');
+$routes->post('songs/preview', 'Songs::preview');

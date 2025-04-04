@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const transposeChords = document.getElementById('transposeChords');
     const songId = document.getElementById('songId');
     const saveButton = document.getElementById('saveButton');
+    const previewButton = document.getElementById('previewButton');
     
     // Define the chromatic scale with sharps
     const chromaticScale = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#'];
@@ -294,5 +295,38 @@ document.addEventListener('DOMContentLoaded', function() {
             editor.value = initialMetadata;
             updatePreview();
         }
+    }
+
+    // Add preview button click handler
+    if (previewButton) {
+        previewButton.addEventListener('click', function() {
+            // Get the current preview content
+            const previewContent = preview.innerHTML;
+            
+            // Create a form to post the content
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/songs/preview';
+            form.target = '_blank'; // Open in new window
+            
+            // Add the content as a hidden field
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'content';
+            input.value = previewContent;
+            form.appendChild(input);
+            
+            // Add the title as a hidden field
+            const titleInput = document.createElement('input');
+            titleInput.type = 'hidden';
+            titleInput.name = 'title';
+            titleInput.value = songTitle.value || 'Song Preview';
+            form.appendChild(titleInput);
+            
+            // Submit the form
+            document.body.appendChild(form);
+            form.submit();
+            document.body.removeChild(form);
+        });
     }
 }); 

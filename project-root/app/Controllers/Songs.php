@@ -104,4 +104,19 @@ class Songs extends BaseController
             'message' => 'Failed to delete song'
         ]);
     }
+
+    public function preview()
+    {
+        $content = $this->request->getPost('content');
+        $title = $this->request->getPost('title');
+        
+        if (!$content) {
+            return redirect()->to('/songs');
+        }
+        
+        return view('songs/preview', [
+            'content' => $content,
+            'title' => $title
+        ]);
+    }
 } 

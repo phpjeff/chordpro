@@ -14,7 +14,10 @@
                 </li>
             </ul>
             <?php if (current_url() == base_url('songs/create') || strpos(current_url(), '/songs/create/') !== false): ?>
-                <button class="btn btn-success" id="saveButton">Save Song</button>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-primary" id="previewButton">Preview</button>
+                    <button class="btn btn-success" id="saveButton">Save Song</button>
+                </div>
             <?php endif; ?>
         </div>
     </div>
