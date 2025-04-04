@@ -5,7 +5,7 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
+            <ul class="navbar-nav me-auto">
                 <li class="nav-item">
                     <a class="nav-link" href="<?= base_url('songs') ?>">Browse Songs</a>
                 </li>
@@ -13,6 +13,9 @@
                     <a class="nav-link" href="<?= base_url('songs/create') ?>">Create New Song</a>
                 </li>
             </ul>
+            <?php if (current_url() == base_url('songs/create') || strpos(current_url(), '/songs/create/') !== false): ?>
+                <button class="btn btn-success" id="saveButton">Save Song</button>
+            <?php endif; ?>
         </div>
     </div>
 </nav> 

@@ -1,17 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
+<?= $this->extend('layouts/main') ?>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $title ?></title>
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Custom CSS -->
-    <link href="/assets/css/styles.css" rel="stylesheet">
-</head>
-
-<body>
+<?= $this->section('content') ?>
     <?php if ($error): ?>
         <div class="alert alert-danger m-3" role="alert">
             <?= $error ?>
@@ -35,7 +24,7 @@
                     <div class="col-2">
                         <div class="input-group">
                             <span class="input-group-text">Original Key</span>
-                            <select class="form-select" id="originalKey" style="width: 60px;">
+                            <select class="form-select" id="originalKey">
                                 <?php
                                 $keys = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#'];
                                 foreach ($keys as $key):
@@ -55,13 +44,13 @@
                     <div class="col-2">
                         <div class="input-group">
                             <span class="input-group-text">BPM</span>
-                            <input type="number" class="form-control" id="bpmInput" value="<?= $song ? esc($song['bpm']) : '100' ?>" style="width: 60px;">
+                            <input type="number" class="form-control" id="bpmInput" value="<?= $song ? esc($song['bpm']) : '100' ?>">
                         </div>
                     </div>
                     <div class="col-2">
                         <div class="input-group">
                             <span class="input-group-text">Time</span>
-                            <input type="text" class="form-control" id="timeInput" value="<?= $song ? esc($song['time']) : '4/4' ?>" style="width: 60px;">
+                            <input type="text" class="form-control" id="timeInput" value="<?= $song ? esc($song['time']) : '4/4' ?>">
                         </div>
                     </div>
                     <div class="col-2 offset-2">
@@ -82,11 +71,8 @@
             </div>
         </div>
     <?php endif; ?>
+<?= $this->endSection() ?>
 
-    <!-- Bootstrap 5 JS Bundle -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Custom JS -->
+<?= $this->section('scripts') ?>
     <script src="/assets/js/editor.js"></script>
-</body>
-
-</html>
+<?= $this->endSection() ?>

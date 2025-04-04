@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const originalKey = document.getElementById('originalKey');
     const transposeChords = document.getElementById('transposeChords');
     const songId = document.getElementById('songId');
+    const saveButton = document.getElementById('saveButton');
     
     // Define the chromatic scale with sharps
     const chromaticScale = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#'];
@@ -95,21 +96,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Add save button to navbar
-    const navbar = document.createElement('nav');
-    navbar.className = 'navbar navbar-expand-lg navbar-light bg-light';
-    navbar.innerHTML = `
-        <div class="container-fluid">
-            <a class="navbar-brand" href="/">ChordPro</a>
-            <div class="d-flex">
-                <button class="btn btn-success" id="saveButton">Save Song</button>
-            </div>
-        </div>
-    `;
-    document.body.insertBefore(navbar, document.body.firstChild);
-
     // Add save button click handler
-    document.getElementById('saveButton').addEventListener('click', saveSong);
+    if (saveButton) {
+        saveButton.addEventListener('click', saveSong);
+    }
     
     // Initialize new song if needed
     initializeNewSong();
