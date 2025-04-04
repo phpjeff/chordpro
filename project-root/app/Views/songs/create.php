@@ -47,7 +47,7 @@
                         </div>
                     </div>
                     <div class="col-2">
-                        <div class="form-check form-switch ms-2">
+                        <div class="form-check form-switch">
                             <input class="form-check-input" type="checkbox" id="transposeChords">
                             <label class="form-check-label" for="transposeChords">Transpose</label>
                         </div>
@@ -64,8 +64,8 @@
                             <input type="text" class="form-control" id="timeInput" value="<?= $song ? esc($song['time']) : '4/4' ?>" style="width: 60px;">
                         </div>
                     </div>
-                    <div class="col-2 ms-4">
-                        <div class="form-check form-switch">
+                    <div class="col-2 offset-2">
+                        <div class="form-check form-switch float-end">
                             <input class="form-check-input" type="checkbox" id="autoRefresh" checked>
                             <label class="form-check-label" for="autoRefresh">Auto-refresh</label>
                         </div>
