@@ -1,67 +1,56 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Song List - ChordPro</title>
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<?= $this->extend('layouts/main') ?>
+
+<?= $this->section('styles') ?>
     <!-- Font Awesome for icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <!-- Custom CSS -->
-    <link href="/assets/css/styles.css" rel="stylesheet">
-</head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container">
-            <a class="navbar-brand" href="/">ChordPro</a>
-            <div class="d-flex">
-                <a href="/songs/create" class="btn btn-success">
-                    <i class="fas fa-plus"></i> New Song
-                </a>
-            </div>
-        </div>
-    </nav>
+<?= $this->endSection() ?>
 
-    <div class="container mt-4">
-        <h1 class="mb-4">Song List</h1>
-        
-        <div class="table-responsive">
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>Song Title</th>
-                        <th>Key</th>
-                        <th>BPM</th>
-                        <th>Time</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php if (empty($songs)): ?>
-                    <tr>
-                        <td colspan="5" class="text-center">No songs found. <a href="/songs/create">Create your first song</a></td>
-                    </tr>
-                    <?php else: ?>
-                        <?php foreach ($songs as $song): ?>
+<?= $this->section('content') ?>
+<div class="main-content container">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">Song List</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="table-responsive w-100">
+                <table class="table table-hover songs-table">
+                    <thead>
                         <tr>
-                            <td><?= esc($song['title']) ?></td>
-                            <td><?= esc($song['original_key']) ?></td>
-                            <td><?= esc($song['bpm']) ?? '-' ?></td>
-                            <td><?= esc($song['time']) ?? '-' ?></td>
-                            <td>
-                                <a href="/songs/create/<?= $song['id'] ?>" class="btn btn-sm btn-primary" title="Edit">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <button class="btn btn-sm btn-danger delete-song" data-id="<?= $song['id'] ?>" title="Delete">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </td>
+                            <th class="py-3">Song Title</th>
+                            <th class="py-3">Key</th>
+                            <th class="py-3">BPM</th>
+                            <th class="py-3">Time</th>
+                            <th class="py-3">Actions</th>
                         </tr>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        <?php if (empty($songs)): ?>
+                        <tr>
+                            <td colspan="5" class="text-center">No songs found. <a href="/songs/create">Create your first song</a></td>
+                        </tr>
+                        <?php else: ?>
+                            <?php foreach ($songs as $song): ?>
+                            <tr>
+                                <td><?= esc($song['title']) ?></td>
+                                <td><?= esc($song['original_key']) ?></td>
+                                <td><?= esc($song['bpm']) ?? '-' ?></td>
+                                <td><?= esc($song['time']) ?? '-' ?></td>
+                                <td>
+                                    <a href="/songs/create/<?= $song['id'] ?>" class="btn btn-sm btn-primary" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <button class="btn btn-sm btn-danger delete-song" data-id="<?= $song['id'] ?>" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -83,11 +72,10 @@
             </div>
         </div>
     </div>
+</div>
+<?= $this->endSection() ?>
 
-    <!-- Bootstrap 5 JS Bundle -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- Delete Song JavaScript -->
+<?= $this->section('scripts') ?>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
@@ -125,5 +113,4 @@
         });
     });
     </script>
-</body>
-</html> 
+<?= $this->endSection() ?> 

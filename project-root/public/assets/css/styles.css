@@ -171,7 +171,22 @@ body {
     background-color: #f8f9fa;
 }
 
-.table td:last-child {
+/* Songs table styles */
+.songs-table {
+    width: 100%;
+}
+
+.songs-table td:first-child {
+    text-align: left;
+    min-width: 300px;
+}
+
+.songs-table td:last-child {
+    width: 120px;
+    text-align: right;
     white-space: nowrap;
-    width: 1%;
+}
+
+.songs-table td {
+    vertical-align: middle;
 } 
