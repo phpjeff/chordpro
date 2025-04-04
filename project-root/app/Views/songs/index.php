@@ -6,10 +6,10 @@
 <?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
-<div class="main-content container">
+<div class="container">
     <div class="row">
         <div class="col-12">
-            <h1 class="mb-4">Song List</h1>
+            <h1 class="mb-4 mt-4">Song List</h1>
         </div>
     </div>
     <div class="row">
