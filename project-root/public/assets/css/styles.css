@@ -1,0 +1,177 @@
+/* Global Styles */
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Homepage Styles */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 2rem;
+}
+
+.welcome-title {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+}
+
+.welcome-subtitle {
+    font-size: 1.25rem;
+    color: #6c757d;
+    margin-bottom: 2.5rem;
+}
+
+.action-buttons {
+    margin-top: 1rem;
+}
+
+.action-buttons .btn {
+    margin: 0 0.5rem;
+    padding: 0.5rem 1.5rem;
+}
+
+/* Song Editor Layout */
+.content-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.editor-container {
+    flex: 1;
+    display: flex;
+    min-height: calc(100vh - 56px);
+}
+
+.editor-pane, .preview-pane {
+    flex: 1;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.editor-pane {
+    background-color: #f8f9fa;
+    border-right: 1px solid #dee2e6;
+}
+
+.preview-pane {
+    background-color: #fff;
+}
+
+/* Editor */
+#editor {
+    width: 100%;
+    height: 100%;
+    font-family: monospace;
+    resize: none;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    padding: 1rem;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* Toolbar */
+.toolbar {
+    padding: 0.5rem 1rem;
+    background-color: #fff;
+    border-bottom: 1px solid #dee2e6;
+}
+
+/* Preview Styles */
+.preview-content {
+    font-family: 'Times New Roman', Times, serif;
+    padding: 2rem;
+    flex: 1;
+    white-space: pre;
+    font-size: 14px;
+}
+
+.preview-header {
+    margin-bottom: 1.5rem;
+    white-space: normal;
+}
+
+.preview-title {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 0.3rem;
+    color: #333;
+}
+
+.preview-meta {
+    color: #666;
+    font-size: 1rem;
+    margin-bottom: 2rem;
+}
+
+.verse {
+    margin-bottom: 2rem;
+}
+
+.section-name {
+    font-weight: bold;
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+.line {
+    margin-bottom: 1.1em;
+    line-height: 2.5;
+    position: relative;
+}
+
+.chord {
+    color: #2c5282;
+    font-weight: bold;
+    font-family: monospace;
+    position: relative;
+    top: -1.5em;
+    display: inline-block;
+    width: 0;
+    white-space: nowrap;
+    font-size: 14px;
+}
+
+/* Song List Styles */
+.table {
+    margin-bottom: 2rem;
+}
+
+.table th {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.table td {
+    vertical-align: middle;
+}
+
+.table .btn {
+    margin: 0 0.25rem;
+}
+
+.table .btn-sm {
+    padding: 0.25rem 0.5rem;
+}
+
+.table .fa-edit,
+.table .fa-trash {
+    font-size: 0.875rem;
+}
+
+.table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.table td:last-child {
+    white-space: nowrap;
+    width: 1%;
+} 
