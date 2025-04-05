@@ -10,7 +10,7 @@ class SongModel extends Model
     protected $primaryKey = 'id';
     protected $useAutoIncrement = true;
     protected $returnType = 'array';
-    protected $allowedFields = ['title', 'original_key', 'bpm', 'time', 'chordpro'];
+    protected $allowedFields = ['title', 'original_key', 'bpm', 'time', 'chordpro', 'user_id'];
     
     // Dates
     protected $useTimestamps = true;
@@ -24,7 +24,8 @@ class SongModel extends Model
         'original_key' => 'required|max_length[7]',
         'bpm' => 'permit_empty|integer|greater_than[0]|less_than[300]',
         'time' => 'permit_empty|max_length[5]',
-        'chordpro' => 'required'
+        'chordpro' => 'required',
+        'user_id' => 'required|integer'
     ];
     
     protected $validationMessages = [
@@ -44,6 +45,10 @@ class SongModel extends Model
         ],
         'chordpro' => [
             'required' => 'ChordPro content is required'
+        ],
+        'user_id' => [
+            'required' => 'User ID is required',
+            'integer' => 'User ID must be a valid integer'
         ]
     ];
     

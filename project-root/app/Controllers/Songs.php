@@ -16,12 +16,24 @@ class Songs extends BaseController
 
     public function index()
     {
-        $data['songs'] = $this->songModel->findAll();
+        // Check if user is logged in
+        if (!session()->get('isLoggedIn')) {
+            return redirect()->to('/')->with('error', 'You must be logged in to view your songs');
+        }
+        
+        // Only show songs for the logged-in user
+        $userId = session()->get('user_id');
+        $data['songs'] = $this->songModel->where('user_id', $userId)->findAll();
         return view('songs/index', $data);
     }
 
     public function create($id = null)
     {
+        // Check if user is logged in
+        if (!session()->get('isLoggedIn')) {
+            return redirect()->to('/')->with('error', 'You must be logged in to create or edit songs');
+        }
+
         $data = [
             'song' => null,
             'title' => 'Create New Song',
@@ -29,12 +41,15 @@ class Songs extends BaseController
         ];
 
         if ($id !== null) {
-            $song = $this->songModel->find($id);
+            // Only allow editing songs owned by the current user
+            $userId = session()->get('user_id');
+            $song = $this->songModel->where('id', $id)->where('user_id', $userId)->first();
+            
             if ($song) {
                 $data['song'] = $song;
                 $data['title'] = 'Edit Song: ' . $song['title'];
             } else {
-                $data['error'] = 'Song not found';
+                $data['error'] = 'Song not found or you do not have permission to edit it';
             }
         }
 
@@ -51,19 +66,38 @@ class Songs extends BaseController
             ]);
         }
 
+        // Get the user ID from the session
+        $userId = session()->get('user_id');
+        if (!$userId) {
+            return $this->response->setStatusCode(401)->setJSON([
+                'success' => false,
+                'message' => 'You must be logged in to save songs'
+            ]);
+        }
+
         // Get the POST data
         $data = [
             'title' => $this->request->getPost('title'),
             'original_key' => $this->request->getPost('original_key'),
             'bpm' => $this->request->getPost('bpm'),
             'time' => $this->request->getPost('time'),
-            'chordpro' => $this->request->getPost('chordpro')
+            'chordpro' => $this->request->getPost('chordpro'),
+            'user_id' => $userId
         ];
 
-        // If we're updating an existing song, add the ID
+        // If we're updating an existing song, add the ID and verify ownership
         $id = $this->request->getPost('id');
         if ($id) {
             $data['id'] = $id;
+            
+            // Verify the song belongs to the current user
+            $existingSong = $this->songModel->where('id', $id)->where('user_id', $userId)->first();
+            if (!$existingSong) {
+                return $this->response->setStatusCode(403)->setJSON([
+                    'success' => false,
+                    'message' => 'You do not have permission to update this song'
+                ]);
+            }
         }
 
         // Try to save the song
@@ -92,6 +126,23 @@ class Songs extends BaseController
             ]);
         }
 
+        // Verify the song belongs to the current user
+        $userId = session()->get('user_id');
+        if (!$userId) {
+            return $this->response->setStatusCode(401)->setJSON([
+                'success' => false,
+                'message' => 'You must be logged in to delete songs'
+            ]);
+        }
+
+        $song = $this->songModel->where('id', $id)->where('user_id', $userId)->first();
+        if (!$song) {
+            return $this->response->setStatusCode(403)->setJSON([
+                'success' => false,
+                'message' => 'You do not have permission to delete this song'
+            ]);
+        }
+
         if ($this->songModel->delete($id)) {
             return $this->response->setJSON([
                 'success' => true,
@@ -107,10 +158,15 @@ class Songs extends BaseController
 
     public function preview($id = null)
     {
+        // Check if user is logged in
+        if (!session()->get('isLoggedIn')) {
+            return redirect()->to('/')->with('error', 'You must be logged in to preview songs');
+        }
+
         if ($id) {
-            // Fetch song data by ID
-            $songModel = new \App\Models\SongModel();
-            $song = $songModel->find($id);
+            // Fetch song data by ID and verify ownership
+            $userId = session()->get('user_id');
+            $song = $this->songModel->where('id', $id)->where('user_id', $userId)->first();
             
             if (!$song) {
                 return redirect()->to('/songs');

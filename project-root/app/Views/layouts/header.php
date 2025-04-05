@@ -6,17 +6,36 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="<?= base_url('songs') ?>">Browse Songs</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="<?= base_url('songs/create') ?>">Create New Song</a>
-                </li>
+                <?php if (session()->get('isLoggedIn')): ?>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?= base_url('songs') ?>">Browse Songs</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?= base_url('songs/create') ?>">Create New Song</a>
+                    </li>
+                <?php endif; ?>
+            </ul>
+            <ul class="navbar-nav">
+                <?php if (session()->get('isLoggedIn')): ?>
+                    <li class="nav-item">
+                        <span class="nav-link">Welcome, <?= session()->get('username') ?></span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?= base_url('auth/logout') ?>">Logout</a>
+                    </li>
+                <?php else: ?>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?= base_url('auth/login') ?>">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?= base_url('auth/register') ?>">Register</a>
+                    </li>
+                <?php endif; ?>
             </ul>
             <?php 
             $currentUrl = current_url();
             $isCreatePage = strpos($currentUrl, '/songs/create') !== false;
-            if ($isCreatePage): 
+            if ($isCreatePage && session()->get('isLoggedIn')): 
             ?>
                 <div class="d-flex gap-2">
                     <button class="btn btn-outline-primary" id="previewButton">Preview</button>
