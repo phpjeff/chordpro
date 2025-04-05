@@ -140,6 +140,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 continue;
             }
             
+            // Check for page break directives
+            if (line.trim() === '{new_page}' || line.trim() === '{np}') {
+                html += '<div class="new-page"></div>';
+                continue;
+            }
+            
             if (line.match(/{.*}/)) continue; // Skip metadata lines
             
             if (line.startsWith('[Verse') || line.startsWith('[Chorus') || line.startsWith('[Bridge')) {
@@ -335,5 +341,38 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.body.removeChild(form);
             }
         });
+    }
+    
+    // Function to insert a page break at the cursor position
+    function insertPageBreak() {
+        const start = editor.selectionStart;
+        const end = editor.selectionEnd;
+        const text = editor.value;
+        
+        // Insert the page break directive without an extra line break
+        const newText = text.substring(0, start) + '{new_page}' + text.substring(end);
+        editor.value = newText;
+        
+        // Move cursor after the inserted page break
+        const newCursorPos = start + '{new_page}'.length;
+        editor.setSelectionRange(newCursorPos, newCursorPos);
+        editor.focus();
+        
+        // Trigger the input event to update preview
+        editor.dispatchEvent(new Event('input'));
+    }
+    
+    // Add keyboard shortcut for inserting page break (Ctrl+Enter or Cmd+Enter)
+    document.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+            e.preventDefault();
+            insertPageBreak();
+        }
+    });
+    
+    // Add page break button click handler
+    const pageBreakButton = document.getElementById('pageBreakButton');
+    if (pageBreakButton) {
+        pageBreakButton.addEventListener('click', insertPageBreak);
     }
 }); 

@@ -231,6 +231,12 @@ class Songs extends BaseController
                 continue;
             }
             
+            // Check for page break directives
+            if (trim($line) === '{new_page}' || trim($line) === '{np}') {
+                $html .= '<div class="new-page"></div>';
+                continue;
+            }
+            
             if (preg_match('/{.*}/', $line)) continue; // Skip metadata lines
             
             if (preg_match('/^\[(Verse|Chorus|Bridge).*\]$/', $line, $matches)) {

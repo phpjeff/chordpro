@@ -53,7 +53,12 @@
                             <input type="text" class="form-control" id="timeInput" value="<?= $song ? esc($song['time']) : '4/4' ?>">
                         </div>
                     </div>
-                    <div class="col-2 offset-2">
+                    <div class="col-2">
+                        <button type="button" class="btn btn-outline-secondary" id="pageBreakButton" title="Insert Page Break (Ctrl+Enter)">
+                            <i class="fas fa-file-alt"></i> Page Break
+                        </button>
+                    </div>
+                    <div class="col-2">
                         <div class="form-check form-switch float-end">
                             <input class="form-check-input" type="checkbox" id="autoRefresh" checked>
                             <label class="form-check-label" for="autoRefresh">Auto-refresh</label>

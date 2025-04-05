@@ -11,6 +11,9 @@
     .no-print {
         display: none !important;
     }
+    .new-page {
+        break-after: page;
+    }
 }
 
 body {
@@ -93,4 +96,27 @@ body {
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     font-family: system-ui, -apple-system, sans-serif;
     z-index: 1000;
+}
+
+/* Page break indicator for editor page only */
+.editor-pane .new-page {
+    height: 2px;
+    background-color: #ddd;
+    margin: 1rem 0;
+    position: relative;
+}
+
+.editor-pane .new-page::before {
+    content: "Page Break";
+    position: absolute;
+    top: -10px;
+    left: 0;
+    font-size: 10px;
+    color: #999;
+    font-family: system-ui, -apple-system, sans-serif;
+}
+
+/* Hide page break indicator in preview */
+.preview-pane .new-page {
+    display: none;
 } 
