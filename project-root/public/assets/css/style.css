@@ -1,0 +1,48 @@
+.editor-container {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.editor-pane, .preview-pane {
+    flex: 1;
+    min-height: calc(100vh - 250px);
+}
+
+.editor-pane textarea {
+    height: calc(100% - 40px);
+    font-family: monospace;
+    tab-size: 2;
+}
+
+#diatonicChords {
+    gap: 0.25rem;
+    margin-bottom: 0.5rem;
+}
+
+#diatonicChords .btn {
+    min-width: 60px;
+    font-family: monospace;
+}
+
+.preview-content {
+    height: 100%;
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    padding: 1rem;
+    overflow-y: auto;
+    font-family: monospace;
+    white-space: pre-wrap;
+}
+
+.toolbar {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.content-wrapper {
+    padding: 1rem;
+} 
