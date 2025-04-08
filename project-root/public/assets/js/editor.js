@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const saveButton = document.getElementById('saveButton');
     const previewButton = document.getElementById('previewButton');
     const diatonicChords = document.getElementById('diatonicChords');
+    const capoInput = document.getElementById('capoInput');
     
     // Define the chromatic scales with separate sharp and flat versions
     const chromaticScaleWithSharps = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#'];
@@ -166,6 +167,37 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Function to show a notification
+    function showNotification(message, isError = false) {
+        // Remove any existing notification
+        const existingNotification = document.querySelector('.notification');
+        if (existingNotification) {
+            existingNotification.remove();
+        }
+        
+        // Create new notification
+        const notification = document.createElement('div');
+        notification.className = `notification${isError ? ' error' : ''}`;
+        notification.textContent = message;
+        
+        // Add to document
+        document.body.appendChild(notification);
+        
+        // Show notification with animation
+        setTimeout(() => {
+            notification.classList.add('show');
+        }, 10);
+        
+        // Hide notification after 5 seconds
+        setTimeout(() => {
+            notification.classList.remove('show');
+            // Remove from DOM after animation completes
+            setTimeout(() => {
+                notification.remove();
+            }, 300);
+        }, 5000);
+    }
+
     // Function to save or update the song
     async function saveSong() {
         const data = {
@@ -192,8 +224,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const result = await response.json();
 
             if (result.success) {
-                // Show success message
-                alert(result.message);
+                // Show success notification
+                showNotification(result.message);
                 
                 // If this was a new song, update the URL to edit mode
                 if (!songId && result.id) {
@@ -201,11 +233,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     location.reload();
                 }
             } else {
-                // Show error message
-                alert('Error: ' + (result.errors ? Object.values(result.errors).join('\n') : result.message));
+                // Show error notification
+                showNotification('Error: ' + (result.errors ? Object.values(result.errors).join('\n') : result.message), true);
             }
         } catch (error) {
-            alert('Error saving song: ' + error.message);
+            showNotification('Error saving song: ' + error.message, true);
         }
     }
 
@@ -213,13 +245,20 @@ document.addEventListener('DOMContentLoaded', function() {
     document.addEventListener('keydown', function(e) {
         if ((e.ctrlKey || e.metaKey) && e.key === 's') {
             e.preventDefault();
-            saveSong();
+            saveSong().then(() => {
+                // After successful save, update the input fields to reflect any changes in the editor
+                populateMetadataFields();
+            });
         }
     });
 
     // Add save button click handler
     if (saveButton) {
-        saveButton.addEventListener('click', saveSong);
+        saveButton.addEventListener('click', async function() {
+            await saveSong();
+            // After successful save, update the input fields to reflect any changes in the editor
+            populateMetadataFields();
+        });
     }
     
     // Initialize new song if needed
@@ -229,47 +268,69 @@ document.addEventListener('DOMContentLoaded', function() {
     function populateMetadataFields() {
         const content = editor.value;
         
+        // Extract all metadata lines first
+        const metadataLines = content.split('\n').filter(line => line.match(/^{.*}/));
+        
         // Extract title
-        const titleMatch = content.match(/{title:\s*(.+)}/);
+        const titleMatch = metadataLines.find(line => line.match(/^{title:\s*(.+)}/));
         if (titleMatch && songTitle) {
-            songTitle.value = titleMatch[1].trim();
+            const match = titleMatch.match(/^{title:\s*(.+)}/);
+            songTitle.value = match[1].trim();
         }
         
         // Extract artist in both formats
-        const artistMatch = content.match(/{artist:\s*(.+)}/);
-        const metaArtistMatch = content.match(/{meta:\s*artist\s+(.+)}/);
+        const artistMatch = metadataLines.find(line => line.match(/^{artist:\s*(.+)}/));
+        const metaArtistMatch = metadataLines.find(line => line.match(/^{meta:\s*artist\s+(.+)}/));
         if (artistMatch && artistInput) {
-            artistInput.value = artistMatch[1].trim();
+            const match = artistMatch.match(/^{artist:\s*(.+)}/);
+            artistInput.value = match[1].trim();
         } else if (metaArtistMatch && artistInput) {
-            artistInput.value = metaArtistMatch[1].trim();
+            const match = metaArtistMatch.match(/^{meta:\s*artist\s+(.+)}/);
+            artistInput.value = match[1].trim();
         }
         
         // Extract copyright in both formats
-        const copyrightMatch = content.match(/{copyright:\s*(.+)}/);
-        const metaCopyrightMatch = content.match(/{meta:\s*copyright\s+(.+)}/);
+        const copyrightMatch = metadataLines.find(line => line.match(/^{copyright:\s*(.+)}/));
+        const metaCopyrightMatch = metadataLines.find(line => line.match(/^{meta:\s*copyright\s+(.+)}/));
         if (copyrightMatch && copyrightInput) {
-            copyrightInput.value = copyrightMatch[1].trim();
+            const match = copyrightMatch.match(/^{copyright:\s*(.+)}/);
+            copyrightInput.value = match[1].trim();
         } else if (metaCopyrightMatch && copyrightInput) {
-            copyrightInput.value = metaCopyrightMatch[1].trim();
+            const match = metaCopyrightMatch.match(/^{meta:\s*copyright\s+(.+)}/);
+            copyrightInput.value = match[1].trim();
         }
         
         // Extract key
-        const keyMatch = content.match(/{key:\s*(.+)}/);
+        const keyMatch = metadataLines.find(line => line.match(/^{key:\s*(.+)}/));
         if (keyMatch && originalKey) {
-            originalKey.value = keyMatch[1].trim();
+            const match = keyMatch.match(/^{key:\s*(.+)}/);
+            originalKey.value = match[1].trim();
             updateDiatonicChords();
         }
         
         // Extract tempo
-        const tempoMatch = content.match(/{tempo:\s*([^}]+)}/);
+        const tempoMatch = metadataLines.find(line => line.match(/^{tempo:\s*([^}]+)}/));
         if (tempoMatch && bpmInput) {
-            bpmInput.value = tempoMatch[1].trim().replace(/\s*bpm$/, '');
+            const match = tempoMatch.match(/^{tempo:\s*([^}]+)}/);
+            bpmInput.value = match[1].trim().replace(/\s*bpm$/, '');
         }
         
         // Extract time
-        const timeMatch = content.match(/{time:\s*(.+)}/);
+        const timeMatch = metadataLines.find(line => line.match(/^{time:\s*(.+)}/));
         if (timeMatch && timeInput) {
-            timeInput.value = timeMatch[1].trim();
+            const match = timeMatch.match(/^{time:\s*(.+)}/);
+            timeInput.value = match[1].trim();
+        }
+
+        // Extract capo in both formats
+        const capoMatch = metadataLines.find(line => line.match(/^{capo:\s*(.+)}/));
+        const metaCapoMatch = metadataLines.find(line => line.match(/^{meta:\s*capo\s+(.+)}/));
+        if (capoMatch && capoInput) {
+            const match = capoMatch.match(/^{capo:\s*(.+)}/);
+            capoInput.value = match[1].trim();
+        } else if (metaCapoMatch && capoInput) {
+            const match = metaCapoMatch.match(/^{meta:\s*capo\s+(.+)}/);
+            capoInput.value = match[1].trim();
         }
     }
     
@@ -388,6 +449,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (line.match(/{.*}/)) continue; // Skip metadata lines
             
+            // Check for section tags
             const sectionTags = [
                 'Verse 1', 'Verse 2', 'Verse 3', 'Verse 4', 'Verse 5',
                 'Chorus', 'Chorus 1', 'Chorus 2', 'Tag:', 'Bridge',
@@ -445,7 +507,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Function to update metadata in the correct order
     function updateMetadata(type, value) {
         let content = editor.value;
-        const metadataOrder = ['title', 'artist', 'key', 'tempo', 'time', 'copyright'];
+        const metadataOrder = ['title', 'artist', 'key', 'capo', 'tempo', 'time', 'copyright'];
         
         // Remove existing metadata line if it exists
         content = content.replace(new RegExp(`{${type}:[^}]*}\n?`), '');
@@ -547,6 +609,28 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Update diatonic chord buttons when key changes
         updateDiatonicChords();
+    });
+
+    // Add capo input event listener
+    capoInput.addEventListener('input', function() {
+        // Only update if the value is empty or a valid number between 0 and 12
+        const value = this.value.trim();
+        if (value === '' || (parseInt(value) >= 0 && parseInt(value) <= 12)) {
+            // If value is 0 or empty, remove the capo metadata
+            if (value === '0' || value === '') {
+                // Remove existing capo metadata line if it exists
+                let content = editor.value;
+                content = content.replace(/{capo:[^}]*}\n?/, '');
+                content = content.replace(/{meta:\s*capo\s+[^}]*}\n?/, '');
+                editor.value = content;
+            } else {
+                updateMetadata('capo', value);
+            }
+            
+            if (autoRefresh.checked) {
+                updatePreview();
+            }
+        }
     });
 
     // Initial preview

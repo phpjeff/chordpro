@@ -5,6 +5,33 @@ body {
     flex-direction: column;
 }
 
+/* Notification Styles */
+.notification {
+    position: fixed;
+    top: 36px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #28a745;
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    text-align: center;
+    font-size: 1.1rem;
+    max-width: 80%;
+}
+
+.notification.show {
+    opacity: 1;
+}
+
+.notification.error {
+    background-color: #dc3545;
+}
+
 /* Homepage Styles */
 .main-content {
     flex: 1;
