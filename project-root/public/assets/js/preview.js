@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Function to get current key from preview content
     function getCurrentKey() {
-        const keyMatch = document.querySelector('.preview-meta')?.textContent.match(/Key: ([A-G][#b]?)/);
+        const keyMatch = document.querySelector('.preview-meta')?.textContent.match(/Key - ([A-G][#b]?)/);
         return keyMatch ? keyMatch[1] : null;
     }
     
@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Update the key in the preview header
         const keyElement = document.querySelector('.preview-meta');
         if (keyElement) {
-            keyElement.textContent = keyElement.textContent.replace(/Key: [A-G][#b]?/, `Key: ${targetKey}`);
+            keyElement.textContent = keyElement.textContent.replace(/Key - [A-G][#b]?/, `Key - ${targetKey}`);
         }
         
         // Update the current key for next transposition
