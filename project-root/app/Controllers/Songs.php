@@ -46,6 +46,23 @@ class Songs extends BaseController
             $song = $this->songModel->where('id', $id)->where('user_id', $userId)->first();
             
             if ($song) {
+                // Extract metadata from ChordPro content
+                $chordpro = $song['chordpro'];
+                
+                // Extract artist in both formats
+                if (preg_match('/{artist:\s*(.+)}/', $chordpro, $matches)) {
+                    $song['artist'] = trim($matches[1]);
+                } elseif (preg_match('/{meta:\s*artist\s+(.+)}/', $chordpro, $matches)) {
+                    $song['artist'] = trim($matches[1]);
+                }
+                
+                // Extract copyright in both formats
+                if (preg_match('/{copyright:\s*(.+)}/', $chordpro, $matches)) {
+                    $song['copyright'] = trim($matches[1]);
+                } elseif (preg_match('/{meta:\s*copyright\s+(.+)}/', $chordpro, $matches)) {
+                    $song['copyright'] = trim($matches[1]);
+                }
+                
                 $data['song'] = $song;
                 $data['title'] = 'Edit Song: ' . $song['title'];
             } else {
@@ -198,27 +215,100 @@ class Songs extends BaseController
     private function parseChordPro($text)
     {
         // Basic ChordPro parsing
-        $html = '<div class="preview-header">';
+        $html = '<div class="row preview-header">';
         
         // Parse metadata
         $title = preg_match('/{title:\s*(.+)}/', $text, $matches) ? $matches[1] : null;
         $key = preg_match('/{key:\s*(.+)}/', $text, $matches) ? $matches[1] : null;
         $tempo = preg_match('/{tempo:\s*([^}]+)}/', $text, $matches) ? $matches[1] : null;
         $time = preg_match('/{time:\s*(.+)}/', $text, $matches) ? $matches[1] : null;
+
+        // Parse artist in both formats
+        $artist = null;
+        if (preg_match('/{artist:\s*(.+)}/', $text, $matches)) {
+            $artist = $matches[1];
+        } elseif (preg_match('/{meta:\s*artist\s+(.+)}/', $text, $matches)) {
+            $artist = $matches[1];
+        }
+
+        // Parse copyright in both formats
+        $copyright = null;
+        if (preg_match('/{copyright:\s*(.+)}/', $text, $matches)) {
+            $copyright = $matches[1];
+        } elseif (preg_match('/{meta:\s*copyright\s+(.+)}/', $text, $matches)) {
+            $copyright = $matches[1];
+        }
+        
+        // Parse ccli
+        if (preg_match('/{ccli:\s*(.+)}/', $text, $matches)) {
+            $ccli = $matches[1];
+        }
+
+        // Parse ccli_license
+        if (preg_match('/{ccli_license:\s*(.+)}/', $text, $matches)) {
+            $ccli_license = $matches[1];
+        }
+
+        // Parse header in both formats
+        $header = null;
+        if (preg_match('/{header:\s*(.+)}/', $text, $matches)) {
+            $header = $matches[1];
+        } elseif (preg_match('/{meta:\s*header\s+(.+)}/', $text, $matches)) {
+            $header = $matches[1];
+        }
+
+        // Parse footer in both formats
+        $footer = null;
+        if (preg_match('/{footer:\s*(.+)}/', $text, $matches)) {
+            $footer = $matches[1];
+        } elseif (preg_match('/{meta:\s*footer\s+(.+)}/', $text, $matches)) {
+            $footer = $matches[1];
+        }
+
+        // Parse capo in both formats
+        $capo = null;
+        if (preg_match('/{capo:\s*(.+)}/', $text, $matches)) {
+            $capo = $matches[1];
+        } elseif (preg_match('/{meta:\s*capo\s+(.+)}/', $text, $matches)) {
+            $capo = $matches[1];
+        }
+
+        // Group metadata for displaying in the preview
+        $songMeta = [];
+        if ($key) $songMeta[] = "Key - {$key}";
+        if ($tempo) $songMeta[] = "Tempo - {$tempo} bpm";
+        if ($time) $songMeta[] = "Time - {$time}";
+        
+        $headerMeta = [];
+        if ($artist) $headerMeta[] = "{$artist}";
+        if ($header) $headerMeta[] = "{$header}";
+        
+        $footerMeta = [];
+        if ($ccli) $footerMeta[] = "CCLI Song # {$ccli}";
+        if ($copyright) $footerMeta[] = "{$copyright}";
+        if ($footer) $footerMeta[] = "{$footer}";
+        if ($ccli_license) $footerMeta[] = "CCLI License # {$ccli_license}";
         
         if ($title) {
-            $html .= "<div class=\"preview-title\">{$title}</div>";
+            if ($capo) {
+                $html .= "<div class=\"col-10 preview-title\">{$title}</div>";
+                $html .= "<div class=\"col-2 preview-capo\">Capo {$capo}</div>";
+            } else {
+                $html .= "<div class=\"col-12 preview-title\">{$title}</div>";
+            }
+        }
+
+        // Add header with line breaks
+        if (!empty($headerMeta)) {
+            $html .= "<div class=\"col-12 preview-headermeta\">" . implode('<br />', $headerMeta) . "</div>";
+        }
+
+        // Add song metadata pipe separated
+        if (!empty($songMeta)) {
+            $html .= "<div class=\"col-12 preview-meta\">" . implode(' | ', $songMeta) . "</div>";
         }
         
-        $meta = [];
-        if ($key) $meta[] = "Key: {$key}";
-        if ($tempo) $meta[] = "{$tempo} bpm";
-        if ($time) $meta[] = "{$time}";
-        
-        if (!empty($meta)) {
-            $html .= "<div class=\"preview-meta\">" . implode(', ', $meta) . "</div>";
-        }
-        
+        // close header row
         $html .= '</div>';
         
         // Parse content
@@ -239,10 +329,13 @@ class Songs extends BaseController
             
             if (preg_match('/{.*}/', $line)) continue; // Skip metadata lines
             
-            if (preg_match('/^\[(Verse|Chorus|Bridge).*\]$/', $line, $matches)) {
+            $sectionNames = ['Verse:', 'Verse 1:', 'Verse 2:', 'Verse 3:', 'Verse 4:', 'Verse 5:', 'Chorus:', 'Chorus 1:', 'Chorus 2:', 'Bridge:', 'Intro:', 'Outro:', 'Tag:', 'Pre-Chorus:', 'Post-Chorus:'];
+            $sectionPattern = '/^(' . implode('|', $sectionNames) . ').*$/';
+
+            if (preg_match($sectionPattern, $line, $matches)) {
                 if ($inVerse) $html .= '</div>';
                 $sectionName = $matches[1];
-                $html .= "<div class=\"verse\"><div class=\"section-name\">{$sectionName}</div>";
+                $html .= "<div class=\"verse\"><div classw=\"section-name\">{$sectionName}</div>";
                 $inVerse = true;
                 continue;
             }
@@ -255,6 +348,12 @@ class Songs extends BaseController
         }
         
         if ($inVerse) $html .= '</div>';
+        
+        // Add footer
+        if (!empty($footerMeta)) {
+            $html .= "<div class=\"col-12 preview-footer\">" . implode('<br />', $footerMeta) . "</div>";
+        }
+
         return $html;
     }
 } 

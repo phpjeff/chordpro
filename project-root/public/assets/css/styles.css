@@ -140,6 +140,24 @@ body {
     font-size: 14px;
 }
 
+/* Page break indicator for editor page only */
+.preview-content .new-page {
+    height: 2px;
+    background-color: #ddd;
+    margin: 1rem 0;
+    position: relative;
+}
+
+.preview-content .new-page::before {
+    content: "Page Break";
+    position: absolute;
+    top: -14px;
+    left: 0;
+    font-size: 10px;
+    color: #999;
+    font-family: system-ui, -apple-system, sans-serif;
+}
+
 /* Song List Styles */
 .table {
     margin-bottom: 2rem;
