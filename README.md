@@ -16,6 +16,18 @@ A web-based ChordPro editor and previewer built with CodeIgniter 4.
 - CodeIgniter 4
 - Composer
 - Web server (Apache/Nginx)
+- MySQL/MariaDB database
+- Required PHP extensions:
+  - [intl](http://php.net/manual/en/intl.requirements.php)
+  - [mbstring](http://php.net/manual/en/mbstring.installation.php)
+  - [mysqlnd](http://php.net/manual/en/mysqlnd.install.php)
+  - json (enabled by default)
+
+> [!WARNING]
+> The end of life date for PHP 7.4 was November 28, 2022.
+> The end of life date for PHP 8.0 was November 26, 2023.
+> If you are still using PHP 7.4 or 8.0, you should upgrade immediately.
+> The end of life date for PHP 8.1 will be November 25, 2024.
 
 ## Installation
 
@@ -31,10 +43,9 @@ composer install
 ```
 
 3. Configure your environment:
-- Copy `.env.example` to `.env`
-- Update the base URL and other settings in `.env`
-
-4. Set up your web server to point to the `public` directory
+- Copy `env` to `.env`
+- Update the base URL and database settings in `.env`
+- Configure your web server to point to the `public` directory
 
 ## Usage
 
@@ -46,10 +57,49 @@ composer install
 
 ## ChordPro Format
 
-The editor supports standard ChordPro format:
-- Chords in square brackets: `[C]`
-- Section markers: `[Verse 1]`, `[Chorus]`, etc.
-- Metadata directives: `{title: Song Title}`, `{key: C}`, etc.
+The editor supports the following ChordPro format elements:
+
+### Chords
+- Inline chords in square brackets: `[C]Here are [Am]the lyrics`
+- Chord progression lines with bars: `| C | Am | F | G |`
+
+### Section Markers
+- Verse: `Verse 1:`, `Verse 2:`, etc.
+- Chorus: `Chorus:`, `Chorus 1:`, `Chorus 2:`
+- Bridge: `Bridge:`
+- Pre-Chorus: `Pre-Chorus:`
+- Post-Chorus: `Post-Chorus:`
+- Intro: `Intro:`
+- Outro: `Outro:`
+- Tag: `Tag:`
+- Interlude: `Interlude:`
+- Turnaround: `Turnaround:`
+- Breakdown: `Breakdown:`
+- Break: `Break:`
+- Instrumental: `Instrumental:`
+- Solo: `Solo:`
+
+### Metadata Directives
+- Title: `{title: Song Title}`
+- Artist: `{artist: Artist Name}` or `{meta: artist Artist Name}`
+- Key: `{key: C}`
+- Tempo: `{tempo: 120}` (in BPM)
+- Time Signature: `{time: 4/4}`
+- Copyright: `{copyright: (c) 2024}` or `{meta: copyright (c) 2024}`
+- CCLI Song Number: `{ccli: 12345}`
+- CCLI License: `{ccli_license: 12345}`
+- Capo: `{capo: 2}` or `{meta: capo 2}`
+- Header: `{header: Custom Header}` or `{meta: header Custom Header}`
+- Footer: `{footer: Custom Footer}` or `{meta: footer Custom Footer}`
+
+### Page Layout
+- Page Break: `{new_page}` or `{np}`
+
+## Important Notes
+
+- `index.php` is located in the *public* folder for better security
+- Configure your web server to point to the project's *public* folder
+- Do not expose the project root to the web server
 
 ## License
 
