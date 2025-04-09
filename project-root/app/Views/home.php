@@ -2,7 +2,7 @@
 
 <?= $this->section('content') ?>
 <div class="main-content container">
-    <h1 class="welcome-title">Welcome to Chordpro</h1>
+    <h1 class="welcome-title">Welcome to SongBookOnline.com</h1>
     <p class="welcome-subtitle">A simple interface for managing your chord charts in ChordPro format</p>
     <div class="action-buttons">
         <?php if (session()->get('isLoggedIn')): ?>
