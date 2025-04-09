@@ -329,7 +329,13 @@ class Songs extends BaseController
             
             if (preg_match('/{.*}/', $line)) continue; // Skip metadata lines
             
-            $sectionNames = ['Verse:', 'Verse 1:', 'Verse 2:', 'Verse 3:', 'Verse 4:', 'Verse 5:', 'Chorus:', 'Chorus 1:', 'Chorus 2:', 'Bridge:', 'Intro:', 'Outro:', 'Tag:', 'Pre-Chorus:', 'Post-Chorus:'];
+            $sectionNames = [
+                'Verse:', 'Verse 1:', 'Verse 2:', 'Verse 3:', 
+                'Verse 4:', 'Verse 5:', 'Chorus:', 'Chorus 1:', 
+                'Chorus 2:', 'Bridge:', 'Intro:', 'Outro:', 'Tag:', 
+                'Pre-Chorus:', 'Post-Chorus:', 'Interlude:', 'Ending:', 
+                'Turnaround:', 'Breakdown:', 'Break:', 'Instrumental:', 'Solo:'
+            ];
             $sectionPattern = '/^(' . implode('|', $sectionNames) . ').*$/';
 
             if (preg_match($sectionPattern, $line, $matches)) {
@@ -342,9 +348,18 @@ class Songs extends BaseController
             
             // Parse chords and lyrics
             $processedLine = $line;
-            $processedLine = preg_replace('/\[([^\]]+)\]/', '<span class="chord">$1</span>', $processedLine);
             
-            $html .= "<div class=\"line\">{$processedLine}</div>";
+            // Check if this is a chord progression line (contains | characters)
+            if (strpos($line, '|') !== false) {
+                // This is likely a chord progression line
+                $processedLine = preg_replace('/\|/', '<span class="bar">|</span>', $processedLine);
+                // Add a special class for chord-only lines
+                $html .= "<div class=\"line chord-progression\">{$processedLine}</div>";
+            } else {
+                // Regular line with potential [chord] markers
+                $processedLine = preg_replace('/\[([^\]]+)\]/', '<span class="chord">$1</span>', $processedLine);
+                $html .= "<div class=\"line\">{$processedLine}</div>";
+            }
         }
         
         if ($inVerse) $html .= '</div>';

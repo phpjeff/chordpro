@@ -11,7 +11,7 @@
 </head>
 <body>
     <div class="transpose-controls no-print">
-        <div class="input-group">
+        <div class="input-group mb-2">
             <span class="input-group-text">Transpose To</span>
             <select class="form-select" id="transposeKey">
                 <?php
@@ -35,6 +35,10 @@
                     <?php endforeach; ?>
                 </optgroup>
             </select>
+        </div>
+        <div class="input-group">
+            <span class="input-group-text">Capo</span>
+            <input type="number" class="form-control" id="capoValue" min="0" max="12" value="0">
         </div>
     </div>
     

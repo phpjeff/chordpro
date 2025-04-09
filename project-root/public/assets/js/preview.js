@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Get all chord elements
     const chords = document.querySelectorAll('.chord');
     const transposeKeySelect = document.getElementById('transposeKey');
+    const capoValueInput = document.getElementById('capoValue');
     
     // Define the chromatic scales
     const chromaticScaleWithSharps = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#'];
@@ -35,6 +36,16 @@ document.addEventListener('DOMContentLoaded', function() {
         const keyMatch = document.querySelector('.preview-meta')?.textContent.match(/Key - ([A-G][#b]?)/);
         return keyMatch ? keyMatch[1] : null;
     }
+
+    // Function to get current capo value from preview content
+    function getCurrentCapo() {
+        const capoElement = document.querySelector('.preview-capo');
+        if (capoElement) {
+            const capoMatch = capoElement.textContent.match(/Capo (\d+)/);
+            return capoMatch ? parseInt(capoMatch[1]) : 0;
+        }
+        return 0;
+    }
     
     // Get the original key from the preview content
     let currentKey = getCurrentKey();
@@ -46,6 +57,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Set the transpose key to the current key initially
     transposeKeySelect.value = currentKey;
+
+    // Set the initial capo value
+    capoValueInput.value = getCurrentCapo();
     
     // Function to get equivalent flat notation
     function getEquivalentFlat(sharpNote) {
@@ -118,9 +132,56 @@ document.addEventListener('DOMContentLoaded', function() {
         currentKey = targetKey;
     }
     
+    // Function to update capo display
+    function updateCapoDisplay() {
+        const capoValue = parseInt(capoValueInput.value) || 0;
+        let capoElement = document.querySelector('.preview-capo');
+        const previewHeader = document.querySelector('.preview-header');
+        
+        if (capoValue > 0) {
+            if (!capoElement) {
+                // Create capo element if it doesn't exist
+                capoElement = document.createElement('div');
+                capoElement.className = 'col-2 preview-capo';
+                
+                // Find the title element to insert after
+                const titleElement = document.querySelector('.preview-title');
+                if (titleElement) {
+                    titleElement.classList.remove('col-12');
+                    titleElement.classList.add('col-10');
+                    titleElement.after(capoElement);
+                } else if (previewHeader) {
+                    previewHeader.appendChild(capoElement);
+                }
+            }
+            capoElement.textContent = `Capo ${capoValue}`;
+        } else if (capoElement) {
+            // Remove capo element and restore title width
+            const titleElement = document.querySelector('.preview-title');
+            if (titleElement) {
+                titleElement.classList.remove('col-10');
+                titleElement.classList.add('col-12');
+            }
+            capoElement.remove();
+        }
+    }
+    
     // Transpose on key selection change
     transposeKeySelect.addEventListener('change', function() {
         const targetKey = this.value;
         transposeToKey(targetKey);
     });
+    
+    // Update capo display on value change
+    capoValueInput.addEventListener('change', function() {
+        // Ensure the value is within the valid range
+        let value = parseInt(this.value) || 0;
+        value = Math.max(0, Math.min(12, value));
+        this.value = value;
+        
+        updateCapoDisplay();
+    });
+    
+    // Initialize capo display
+    updateCapoDisplay();
 }); 

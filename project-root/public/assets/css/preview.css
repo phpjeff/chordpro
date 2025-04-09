@@ -92,6 +92,17 @@ body {
     white-space: pre;
 }
 
+.chord-progression {
+    font-family: monospace;
+    white-space: pre;
+    margin: -1em 0 0 0;
+    font-weight: 800;
+}
+
+.chord-progression .bar {
+    color: #666;
+}
+
 .print-controls {
     position: fixed;
     top: 1rem;
@@ -113,6 +124,19 @@ body {
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     font-family: system-ui, -apple-system, sans-serif;
     z-index: 1000;
+    width: 250px;
+}
+
+.transpose-controls .input-group {
+    margin-bottom: 0.5rem;
+}
+
+.transpose-controls .input-group:last-child {
+    margin-bottom: 0;
+}
+
+.transpose-controls input[type="number"] {
+    width: 80px;
 }
 
 /* Hide page break indicator in preview */

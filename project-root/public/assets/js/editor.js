@@ -451,31 +451,30 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Check for section tags
             const sectionTags = [
-                'Verse 1', 'Verse 2', 'Verse 3', 'Verse 4', 'Verse 5',
-                'Chorus', 'Chorus 1', 'Chorus 2', 'Tag:', 'Bridge',
-                'Pre-Chorus', 'Post-Chorus', 'Intro', 'Outro',
-                'Interlude', 'Ending:'
+                'Verse 1:', 'Verse 2:', 'Verse 3:', 'Verse 4:', 'Verse 5:',
+                'Chorus:', 'Chorus 1:', 'Chorus 2:', 'Tag:', 'Bridge:',
+                'Pre-Chorus:', 'Post-Chorus:', 'Intro:', 'Outro:',
+                'Interlude:', 'Ending:', 'Turnaround:', 'Breakdown:', 'Break:', 'Instrumental:', 'Solo:'
             ];
 
             if (sectionTags.some(tag => line.startsWith(tag))) {
                 if (inVerse) html += '</div>';
-                // Remove square brackets from section names
-                const sectionName = line.replace(/^\[(.*)\]$/, '$1');
-                html += `<div class="verse"><div class="section-name">${sectionName}</div>`;
+                html += `<div class="verse"><div class="section-name">${line}</div>`;
                 inVerse = true;
                 continue;
             }
             
             // Parse chords and lyrics
             let processedLine = line;
-            const chordRegex = /\[([^\]]+)\]/g;
-            
-            // Replace each chord with a positioned span
-            processedLine = processedLine.replace(chordRegex, (match, chord) => {
-                return `<span class="chord">${chord}</span>`;
-            });
-
-            html += `<div class="line">${processedLine}</div>`;
+            if (line.includes('|')) {
+                // This is likely a chord progression line
+                processedLine = processedLine.replace(/\|/g, '<span class="bar">|</span>');
+                html += `<div class="line chord-progression">${processedLine}</div>`;
+            } else {
+                // Regular line with potential [chord] markers
+                processedLine = processedLine.replace(/\[([^\]]+)\]/g, '<span class="chord">$1</span>');
+                html += `<div class="line">${processedLine}</div>`;
+            }
         }
         
         if (inVerse) html += '</div>';

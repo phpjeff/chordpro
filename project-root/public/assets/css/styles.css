@@ -167,6 +167,17 @@ body {
     font-size: 14px;
 }
 
+.chord-progression {
+    font-family: monospace;
+    white-space: pre;
+    margin: -1em 0 0 0;
+    font-weight: 800;
+}
+
+.bar {
+    color: #666; /* or any color you prefer for the bar lines */
+}
+
 /* Page break indicator for editor page only */
 .preview-content .new-page {
     height: 2px;
