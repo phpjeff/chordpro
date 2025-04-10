@@ -41,6 +41,9 @@ body {
     align-items: center;
     text-align: center;
     padding: 2rem;
+    background: url('/assets/images/stage_background.png') center center;
+    background-size: cover;
+    background-repeat: no-repeat;
 }
 
 .welcome-title {
@@ -50,7 +53,7 @@ body {
 
 .welcome-subtitle {
     font-size: 1.25rem;
-    color: #6c757d;
+    color: #343537;
     margin-bottom: 2.5rem;
 }
 
@@ -137,6 +140,13 @@ body {
     color: #666;
     font-size: 1rem;
     margin-bottom: 2rem;
+}
+
+.preview-capo {
+    color: #666;
+    font-size: 2rem;
+    float: right;
+    margin-top: -3.4rem;
 }
 
 .verse {

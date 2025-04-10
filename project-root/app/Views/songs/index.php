@@ -55,6 +55,9 @@
                 </table>
             </div>
         </div>
+        <div class="col-12 text-end">
+            <a href="/songs/create" class="btn btn-primary">Create Song</a>
+        </div>
     </div>
 
     <!-- Delete Confirmation Modal -->

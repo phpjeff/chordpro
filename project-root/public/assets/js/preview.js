@@ -75,7 +75,44 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Function to transpose a chord
     function transposeChord(chord, semitones, useFlats) {
-        // Extract the root note and any modifiers
+        // Check if the chord has a bass note (e.g., D/F#)
+        const bassMatch = chord.match(/^([A-G][b#]?)\/([A-G][b#]?)(.*)$/);
+        if (bassMatch) {
+            // This is a chord with a bass note
+            const [_, root, bass, modifiers] = bassMatch;
+            
+            // Transpose the root note
+            const normalizedRoot = root.includes('b') ? getEquivalentSharp(root) : root;
+            const rootIndex = chromaticScaleWithSharps.indexOf(normalizedRoot);
+            const newRootIndex = (rootIndex + semitones + 12) % 12;
+            
+            // Transpose the bass note
+            const normalizedBass = bass.includes('b') ? getEquivalentSharp(bass) : bass;
+            const bassIndex = chromaticScaleWithSharps.indexOf(normalizedBass);
+            const newBassIndex = (bassIndex + semitones + 12) % 12;
+            
+            // Use flats or sharps based on the target key's notation
+            let newRoot, newBass;
+            if (useFlats) {
+                newRoot = chromaticScaleWithFlats[newRootIndex];
+                newBass = chromaticScaleWithFlats[newBassIndex];
+            } else {
+                newRoot = chromaticScaleWithSharps[newRootIndex];
+                newBass = chromaticScaleWithSharps[newBassIndex];
+            }
+            
+            // If it's a natural note, always use the natural notation
+            if (['A', 'B', 'C', 'D', 'E', 'F', 'G'].includes(newRoot)) {
+                newRoot = newRoot;
+            }
+            if (['A', 'B', 'C', 'D', 'E', 'F', 'G'].includes(newBass)) {
+                newBass = newBass;
+            }
+            
+            return newRoot + '/' + newBass + modifiers;
+        }
+        
+        // Handle regular chords (no bass note)
         const match = chord.match(/^([A-G][b#]?)(.*)$/);
         if (!match) return chord;
         

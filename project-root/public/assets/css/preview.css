@@ -116,8 +116,8 @@ body {
 
 .transpose-controls {
     position: fixed;
-    top: 1rem;
-    left: 1rem;
+    top: 6rem;
+    right: 1rem;
     background: white;
     padding: 1rem;
     border-radius: 0.5rem;
